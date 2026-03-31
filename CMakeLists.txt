@@ -24,8 +24,10 @@ set (BUILD_SHARED_LIBS OFF CACHE BOOL "Build Raylib as static libraries" FORCE)
 
 project(mygame)
 
-#add raylib as a subdirectory
+#add library subdirectories
 add_subdirectory ("thirdparty/raylib-5.0")
+add_subdirectory ("thirdparty/imgui-docking")
+add_subdirectory ("thirdparty/rlimgui")
 
 
 # MY_SOURCES is defined to be a list of all the source files for my game 
@@ -81,8 +83,9 @@ endif()
 
 target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/")
 
-#Link raylib library statically
-target_link_libraries ("${CMAKE_PROJECT_NAME}" PRIVATE raylib_static)
+#Link libraries statically
+target_link_libraries ("${CMAKE_PROJECT_NAME}" PRIVATE raylib_static imgui rlimgui)
+
 
 
 
