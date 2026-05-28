@@ -114,7 +114,12 @@ bool updateGame()
 	{
 		for (int x = start_view_x; x < end_view_x; x++)
 		{
-			auto& block = gameData.gameMap.getBlockUnsafe(x, y);
+			auto& block		 = gameData.gameMap.getBlockUnsafe(x, y);
+			
+			auto block_above = gameData.gameMap.getBlockSafe(x, y - 1);
+			auto block_below = gameData.gameMap.getBlockSafe(x, y + 1);
+			auto block_right = gameData.gameMap.getBlockSafe(x + 1, y);
+			auto block_left  = gameData.gameMap.getBlockSafe(x - 1, y);
 
 			if (block.type != Block::air)
 			{
@@ -128,20 +133,78 @@ bool updateGame()
 				float posX = x * size;
 				float posY = y * size;
 
-				DrawTexturePro(
-					asset_manager.block_texture_atlas,
-					GetTextureAtlas(block.type, 0, 32, 32),
-					//Rectangle{ 0.f,0.f,(float)asset_manager.dirt.width, (float)asset_manager.dirt.height},
-					{ posX, posY, size, size },
-					{ 0,0 },
-					0.0f,
-					WHITE
-				);
+				if (block.type != Block::woodLog)
+				{
+					DrawTexturePro(
+						asset_manager.block_texture_atlas,
+						GetTextureAtlas(block.type, 0, 32, 32),
+						{ posX, posY, size, size },
+						{ 0,0 },
+						0.0f,
+						WHITE
+					);
+				}
+
+				else
+				{
+					if (block_below->type != Block::woodLog)
+					{
+						DrawTexturePro(
+							asset_manager.tree_texture_atlas,
+							GetTextureAtlas(4, 0, 32, 32),
+							{posX, posY, size, size},
+							{ 0,0 },
+							0.0f,
+							WHITE
+						);
+					}
+
+					else if (block_above->type == Block::leaves)
+					{
+						DrawTexturePro(
+							asset_manager.tree_texture_atlas,
+							GetTextureAtlas(5, 0, 32, 32),
+							{ posX, posY, size, size },
+							{ 0,0 },
+							0.0f,
+							WHITE
+						);
+					}
+
+					else if (block_right->type == Block::leaves)
+					{
+						if (block_left->type == Block::leaves)
+						{
+							DrawTexturePro(
+								asset_manager.tree_texture_atlas,
+								GetTextureAtlas(1, 0, 32, 32),
+								{ posX, posY, size, size },
+								{ 0,0 },
+								0.0f,
+								WHITE
+							);
+							
+						}
+
+						else
+						{
+							DrawTexturePro(
+								asset_manager.tree_texture_atlas,
+								GetTextureAtlas(2, 0, 32, 32),
+								{ posX, posY, size, size },
+								{ 0,0 },
+								0.0f,
+								WHITE
+							);
+						}
+						
+					}
+				}
 			}
 		}
 	}
 
-	//Draw selected block
+	//Draw block selection frame
 	DrawTexturePro(
 		asset_manager.frame,
 		{ 0, 0, (float)asset_manager.frame.width, (float)asset_manager.frame.height }, //source

@@ -54,6 +54,17 @@ int main()
 #pragma region Imgui Game
 				ImGui::Text("Block Selector");
 				ImGui::InputInt("Selected Block", &selected_block);
+				
+				if (ImGui::Button("Select Wood Log"))
+				{
+					selected_block = 11;
+				}
+
+				if (ImGui::Button("Select Leaves"))
+				{
+					selected_block = 12;
+				}
+
 #pragma endregion
 
 				ImGui::End();
