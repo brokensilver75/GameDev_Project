@@ -29,34 +29,37 @@ int main()
 		return 0;
 	}
 
-
 	while (!WindowShouldClose())
 	{
 		BeginDrawing();
 
 		ClearBackground(BLACK);
 
-#pragma region ImGui
-		rlImGuiBegin();
-
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, {});
-		ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, {});
-		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
-		ImGui::PopStyleColor(2);
-
-		//ImGui::ShowDemoWindow();
-#pragma region Imgui Game
-
-#pragma endregion
-
-		rlImGuiEnd();
-#pragma endregion
-
 		if (!updateGame())
 		{
 			CloseWindow();
 		}
+		
+#pragma region ImGui
+			if (show_imgui)
+			{
+				rlImGuiBegin();
 
+				ImGui::Begin("Dev_Gui");
+				ImGui::PushStyleColor(ImGuiCol_WindowBg, {});
+				ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, {});
+				ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+				ImGui::PopStyleColor(2);
+
+#pragma region Imgui Game
+				ImGui::Text("Block Selector");
+				ImGui::InputInt("Selected Block", &selected_block);
+#pragma endregion
+
+				ImGui::End();
+				rlImGuiEnd();
+			}
+#pragma endregion
 
 		EndDrawing();
 	}
