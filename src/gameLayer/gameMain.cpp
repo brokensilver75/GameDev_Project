@@ -5,6 +5,10 @@
 #include <assetManager.h>
 #include <gameMap.h>
 #include <helpers.h>
+#include <raymath.h>
+
+bool show_imgui = false; // single definition
+int selected_block = 0;
 
 struct GameData
 {
@@ -18,7 +22,7 @@ bool initGame()
 {
 	asset_manager.loadAll();
 
-	gameData.gameMap.create(30, 30);
+	gameData.gameMap.create(700, 500);	
 
 	/*gameData.gameMap.getBlockUnsafe(0, 0).type = Block::dirt;
 	gameData.gameMap.getBlockUnsafe(1, 1).type = Block::grass;
@@ -26,29 +30,19 @@ bool initGame()
 	gameData.gameMap.getBlockUnsafe(3, 3).type = Block::glass;
 	gameData.gameMap.getBlockUnsafe(4, 4).type = Block::platform;*/
 
-	for (int y = 0; y < gameData.gameMap.h; y++)
-		for (int x = 0; x < gameData.gameMap.w; x++)
+	for (int i = 0; i < 700; i++)
+	{
+		for (int j = 0; j < 500; j++)
 		{
-
-			float s = (std::sin(x) + 1.f) / 2.f;
-			float s2 = (std::sin(x * 0.5) + 1.f) / 2.f;
-
-			if (gameData.gameMap.h - (gameData.gameMap.h * 0.3 * s) - gameData.gameMap.h * 0.5 -
-				(gameData.gameMap.h * 0.2 * s2)
-
-				< y)
-			{
-				gameData.gameMap.getBlockUnsafe(x, y).type = Block::dirt;
-			}
-			else
-			{
-				gameData.gameMap.getBlockUnsafe(x, y).type = Block::air;
-			}
+			gameData.gameMap.getBlockUnsafe(i, j).type = Block::stone;
 		}
+	}
 
 	gameData.camera.target = { 0, 0 }; // world space center
 	gameData.camera.rotation = 0.0f;
 	gameData.camera.zoom = 100.0f;
+
+	show_imgui = false; // optional (keeps initial state explicit)
 
 	return true;
 }
@@ -91,15 +85,34 @@ bool updateGame()
 		auto b = gameData.gameMap.getBlockSafe(blockX, blockY);
 		if (b)
 		{
-			b->type = Block::gold;
+			b->type = selected_block%Block::BLOCKS_COUNT;//Block::gold;
 		}
+	}
+
+	if (IsKeyPressed(KEY_GRAVE))
+	{
+		show_imgui = !show_imgui;		
 	}
 
 	BeginMode2D(gameData.camera);
 
-	for (int y = 0; y < gameData.gameMap.h; y++)
+	Vector2 top_left_view = GetScreenToWorld2D({ 0, 0 }, gameData.camera);
+	Vector2 bottom_right_view = GetScreenToWorld2D({ (float)GetScreenWidth(), (float)GetScreenHeight() }, gameData.camera);
+
+	int start_view_x = (int)floorf(top_left_view.x - 1);
+	int end_view_x = (int)ceilf(bottom_right_view.x + 1);
+	int start_view_y = (int)floorf(top_left_view.y - 1);
+	int end_view_y = (int)floorf(bottom_right_view.y - 1);
+
+	start_view_x = Clamp(start_view_x, 0, gameData.gameMap.w - 1);
+	end_view_x = Clamp(end_view_x, 0, gameData.gameMap.w - 1);
+
+	start_view_y = Clamp(start_view_y, 0, gameData.gameMap.h - 1);
+	end_view_y = Clamp(end_view_y, 0, gameData.gameMap.h - 1);
+
+	for (int y = start_view_y; y < end_view_y; y++)
 	{
-		for (int x = 0; x < gameData.gameMap.w; x++)
+		for (int x = start_view_x; x < end_view_x; x++)
 		{
 			auto& block = gameData.gameMap.getBlockUnsafe(x, y);
 
@@ -116,7 +129,7 @@ bool updateGame()
 				float posY = y * size;
 
 				DrawTexturePro(
-					asset_manager.textures,
+					asset_manager.block_texture_atlas,
 					GetTextureAtlas(block.type, 0, 32, 32),
 					//Rectangle{ 0.f,0.f,(float)asset_manager.dirt.width, (float)asset_manager.dirt.height},
 					{ posX, posY, size, size },
@@ -140,6 +153,7 @@ bool updateGame()
 
 	EndMode2D();
 	
+	DrawFPS(10, 10);
 
 	return true;
 }
