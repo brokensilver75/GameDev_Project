@@ -7,5 +7,7 @@ struct AssetManager
 	Texture2D textures = {};
 	Texture2D frame = {};
 
+	Texture2D tree_texture_atlas = {};
+
 	void loadAll();
 };
