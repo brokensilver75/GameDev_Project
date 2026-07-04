@@ -3,6 +3,7 @@
 #include  <imgui.h>
 #include <rlImGui.h>
 #include <gameMain.h>
+#include <block.h>
 
 int main()
 {
@@ -12,7 +13,7 @@ int main()
 
 	SetConfigFlags (FLAG_WINDOW_RESIZABLE);
 
-	InitWindow(800, 450, "First Window");
+	InitWindow(1280, 720, "Game Window");
 
 	SetExitKey(KEY_NULL); // Disable Esc from closing game.
 
@@ -41,19 +42,21 @@ int main()
 		}
 		
 #pragma region ImGui
-			if (show_imgui)
+			
+		if (show_imgui)
 			{
 				rlImGuiBegin();
 
-				ImGui::Begin("Dev_Gui");
+				ImGui::Begin("Block Selector");
 				ImGui::PushStyleColor(ImGuiCol_WindowBg, {});
 				ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, {});
 				ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 				ImGui::PopStyleColor(2);
 
 #pragma region Imgui Game
-				ImGui::Text("Block Selector");
-				ImGui::InputInt("Selected Block", &selected_block);
+				ImGui::Text("Block Slider:");
+				ImGui::SliderInt("##Block_Type_Slider", &selected_block, 0, Block::BLOCKS_COUNT - 1);
+				ImGui::Text("%s", Block::names[selected_block]);
 #pragma endregion
 
 				ImGui::End();

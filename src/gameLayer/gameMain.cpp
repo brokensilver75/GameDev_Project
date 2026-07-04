@@ -85,7 +85,7 @@ bool updateGame()
 		auto b = gameData.gameMap.getBlockSafe(blockX, blockY);
 		if (b)
 		{
-			b->type = selected_block%Block::BLOCKS_COUNT;//Block::gold;
+			b->type = selected_block;//Block::gold;
 		}
 	}
 
