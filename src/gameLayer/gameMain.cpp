@@ -3,6 +3,11 @@
 #include <iostream>
 #include <fstream>
 
+bool show_imgui = false;
+int random_matrix_size = 1;
+int rows = 1;
+int cols = 1;
+
 struct GameData
 {
 	float pos_X = 100;
@@ -12,6 +17,10 @@ struct GameData
 
 bool initGame()
 {
+	show_imgui = false;
+	random_matrix_size = 1;
+	rows = 1;
+	cols = 1;
 	return true;
 }
 
@@ -22,15 +31,22 @@ bool updateGame()
 	if (deltaTime > 1.f/5)
 	{
 		deltaTime = 1 / 5.f;
+	}	
+
+	if (IsKeyPressed(KEY_GRAVE))
+	{
+		show_imgui = !show_imgui;
 	}
 
-	if (IsKeyDown(KEY_W)) { gameData.pos_Y -= gameData.speed * deltaTime; }
-	if (IsKeyDown(KEY_A)) { gameData.pos_X -= gameData.speed * deltaTime; }
-	if (IsKeyDown(KEY_S)) { gameData.pos_Y += gameData.speed * deltaTime; }
-	if (IsKeyDown(KEY_D)) { gameData.pos_X += gameData.speed * deltaTime; }
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			DrawRectangle(i * 5, j * 5, 5, 5, BLACK);
+		}
+	}
 
-
-	DrawRectangle(gameData.pos_X, gameData.pos_Y, 50, 50, RED);
+	//DrawRectangle(gameData.pos_X, gameData.pos_Y, 50, 50, RED);
 	//DrawText("Congrats! You created your first window!", 190, 200, 20, RED);
 
 	return true;
@@ -39,4 +55,14 @@ bool updateGame()
 void closeGame()
 {
 	std::cout << "Closing Game!!";
+}
+
+void Update_Random_Matrix(int size)
+{
+	rows = pow(2, size);
+	cols = pow(2, size);
+
+	std::cout << "Updating Random Matrix with size: " << size << " (" << rows << "x" << cols << ")" << std::endl;
+
+
 }

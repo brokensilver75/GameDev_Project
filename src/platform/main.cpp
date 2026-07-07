@@ -34,22 +34,36 @@ int main()
 	{
 		BeginDrawing();
 
-		ClearBackground(BLACK);
+		ClearBackground(WHITE);
 
 #pragma region ImGui
-		rlImGuiBegin();
+		if (show_imgui)
+		{
+			rlImGuiBegin();
 
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, {});
-		ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, {});
-		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
-		ImGui::PopStyleColor(2);
+			ImGui::PushStyleColor(ImGuiCol_WindowBg, {});
+			ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, {});
+			ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+			ImGui::PopStyleColor(2);
 
-		//ImGui::ShowDemoWindow();
+			//ImGui::ShowDemoWindow();
 #pragma region Imgui Game
+			
+			ImGui::Begin("Matrix Settings");
+
+			ImGui::SliderInt("Random Matrix Size", &random_matrix_size, 1, 10);
+			
+			if (ImGui::Button("Update Random Matrix"))
+			{
+				Update_Random_Matrix(random_matrix_size);
+			}
+
 
 #pragma endregion
 
-		rlImGuiEnd();
+			ImGui::End();
+			rlImGuiEnd();
+		}
 #pragma endregion
 
 		if (!updateGame())
